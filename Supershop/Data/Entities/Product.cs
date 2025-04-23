@@ -14,7 +14,7 @@ namespace Supershop.Data.Entities
         public decimal Price { get; set; }
 
         [Display(Name = "Image")]
-        public string ImageUrl { get; set; } = null!;
+        public string? ImageUrl { get; set; }
 
         [Display(Name = "Last Purchase")]
         public DateTime? LastPurchase { get; set; }

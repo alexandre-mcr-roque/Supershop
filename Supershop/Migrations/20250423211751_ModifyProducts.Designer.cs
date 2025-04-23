@@ -12,7 +12,7 @@ using Supershop.Data;
 namespace Supershop.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250423210356_ModifyProducts")]
+    [Migration("20250423211751_ModifyProducts")]
     partial class ModifyProducts
     {
         /// <inheritdoc />
@@ -34,7 +34,6 @@ namespace Supershop.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
