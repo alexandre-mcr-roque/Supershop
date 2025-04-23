@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Supershop.Data;
+
 namespace Supershop
 {
     public class Program
@@ -8,6 +11,10 @@ namespace Supershop
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<DataContext>(ctx =>
+            {
+                ctx.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
 
             var app = builder.Build();
 
