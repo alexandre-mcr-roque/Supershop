@@ -1,15 +1,19 @@
-﻿using Supershop.Data.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using Supershop.Data.Entities;
+using Supershop.Helpers;
 
 namespace Supershop.Data
 {
     public class SeedDb
     {
         private readonly DataContext _ctx;
+        private readonly IUserHelper _userHelper;
         private Random _random;
 
-        public SeedDb(DataContext ctx)
+        public SeedDb(DataContext ctx, IUserHelper userHelper)
         {
             _ctx = ctx;
+            _userHelper = userHelper;
             _random = new Random();
         }
 
@@ -17,24 +21,44 @@ namespace Supershop.Data
         {
             await _ctx.Database.EnsureCreatedAsync();
 
+            var user = await _userHelper.GetUserByEmailAsync("alexandre.mcr.roque@gmail.com");
+            if (user == null)
+            {
+                user = new User
+                {
+                    FirstName = "Alexandre",
+                    LastName = "Roque",
+                    Email = "alexandre.mcr.roque@gmail.com",
+                    UserName = "alexandre.mcr.roque@gmail.com",
+                    PhoneNumber = "123123123"
+                };
+
+                var result = await _userHelper.AddUserAsync(user, "123456");
+                if (result != IdentityResult.Success)
+                {
+                    throw new InvalidOperationException("Could not create the user in seeder");
+                }
+            }
+
             if (!_ctx.Products.Any())
             {
-                AddProduct("iPhone X");
-                AddProduct("Magic Mouse");
-                AddProduct("iWatch Series 4");
-                AddProduct("iPad Mini");
+                AddProduct("iPhone X", user);
+                AddProduct("Magic Mouse", user);
+                AddProduct("iWatch Series 4", user);
+                AddProduct("iPad Mini", user);
                 await _ctx.SaveChangesAsync();
             }
         }
 
-        private void AddProduct(string name)
+        private void AddProduct(string name, User user)
         {
             _ctx.Products.Add(new Product
             {
                 Name = name,
                 Price = _random.Next(1000),
                 IsAvailable = true,
-                Stock = _random.Next(200)
+                Stock = _random.Next(200),
+                User = user
             });
         }
     }

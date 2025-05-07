@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
 using Supershop.Data;
+using Supershop.Data.Entities;
+using Supershop.Helpers;
 
 namespace Supershop
 {
@@ -12,11 +15,26 @@ namespace Supershop
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddDbContext<DataContext>(ctx =>
+
+            builder.Services.AddIdentity<User, IdentityRole>(cfg =>
             {
-                ctx.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                cfg.User.RequireUniqueEmail = true;
+                cfg.Password.RequireDigit = false;
+                cfg.Password.RequiredUniqueChars = 0;
+                cfg.Password.RequireLowercase = false;
+                cfg.Password.RequireUppercase = false;
+                cfg.Password.RequireNonAlphanumeric = false;
+                cfg.Password.RequiredLength = 6;
+            })
+                .AddEntityFrameworkStores<DataContext>();
+
+            builder.Services.AddDbContext<DataContext>(cfg =>
+            {
+                cfg.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
             builder.Services.AddTransient<SeedDb>();
+            builder.Services.AddScoped<IUserHelper, UserHelper>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
             var app = builder.Build();
