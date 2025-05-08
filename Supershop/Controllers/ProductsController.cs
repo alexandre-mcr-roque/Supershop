@@ -168,7 +168,7 @@ namespace Supershop.Controllers
                             await model.ImageFile.CopyToAsync(stream);
                         }
 
-                        path = $"~/images/products/{model.ImageFile.FileName}";
+                        path = $"~/images/products/{file}";
                     }
                     var product = this.ToProduct(model, path);
 
