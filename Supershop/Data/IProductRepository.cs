@@ -3,5 +3,7 @@
 namespace Supershop.Data
 {
     public interface IProductRepository : IGenericRepository<Product>
-    { }
+    {
+        IQueryable<Product> GetAllWithUsers();
+    }
 }

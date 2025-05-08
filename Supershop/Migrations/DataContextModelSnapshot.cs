@@ -193,7 +193,7 @@ namespace Supershop.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Supershop.Data.Entities.User", b =>

@@ -53,6 +53,8 @@ namespace Supershop
 
             app.UseRouting();
 
+            // TODO uncomment after implementing auth
+            //app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
