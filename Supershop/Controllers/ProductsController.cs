@@ -161,7 +161,7 @@ namespace Supershop.Controllers
                         path = Path.Combine(
                             Directory.GetCurrentDirectory(),
                             @"wwwroot\images\products",
-                            model.ImageFile.FileName);
+                            file);
 
                         using (var stream = new FileStream(path, FileMode.Create))
                         {
