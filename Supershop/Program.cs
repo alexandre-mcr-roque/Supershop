@@ -35,7 +35,7 @@ namespace Supershop
 
             builder.Services.AddTransient<SeedDb>();
             builder.Services.AddScoped<IUserHelper, UserHelper>();
-            builder.Services.AddScoped<IImageHelper, ImageHelper>();
+            builder.Services.AddScoped<IBlobHelper, BlobHelper>();
             builder.Services.AddScoped<IConverterHelper, ConverterHelper>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
 

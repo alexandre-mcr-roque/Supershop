@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Supershop.Data;
-using Supershop.Data.Entities;
 using Supershop.Helpers;
 using Supershop.Models;
 
@@ -11,18 +10,18 @@ namespace Supershop.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly IUserHelper _userHelper;
-        private readonly IImageHelper _imageHelper;
+        private readonly IBlobHelper _blobHelper;
         private readonly IConverterHelper _converterHelper;
 
         public ProductsController(
             IProductRepository productRepository,
             IUserHelper userHelper,
-            IImageHelper imageHelper,
+            IBlobHelper blobHelper,
             IConverterHelper converterHelper)
         {
             _productRepository = productRepository;
             _userHelper = userHelper;
-            _imageHelper = imageHelper;
+            _blobHelper = blobHelper;
             _converterHelper = converterHelper;
         }
 
@@ -64,12 +63,12 @@ namespace Supershop.Controllers
         {
             if (ModelState.IsValid)
             {
-                var path = string.Empty;
+                Guid imageId = Guid.Empty;
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-                    path = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
+                    imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
                 }
-                var product = _converterHelper.ToProduct(model, path, true);
+                var product = _converterHelper.ToProduct(model, imageId, true);
 
                 // TODO modify to the currently logged in user
                 product.User = await _userHelper.GetUserByEmailAsync("alexandre.mcr.roque@gmail.com");
@@ -102,7 +101,7 @@ namespace Supershop.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvailable,Stock,ImageFile")] ProductViewModel model)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,ImageId,LastPurchase,LastSale,IsAvailable,Stock,ImageFile")] ProductViewModel model)
         {
             if (id != model.Id)
             {
@@ -113,12 +112,12 @@ namespace Supershop.Controllers
             {
                 try
                 {
-                    var path = model.ImageUrl;
+                    Guid imageId = model.ImageId;
                     if (model.ImageFile != null && model.ImageFile.Length > 0)
                     {
-                        path = await _imageHelper.UploadImageAsync(model.ImageFile, "products", model.ImageUrl);
+                        imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products", model.ImageId);
                     }
-                    var product = _converterHelper.ToProduct(model, path, false);
+                    var product = _converterHelper.ToProduct(model, imageId, false);
 
                     // TODO modify to the currently logged in user
                     product.User = await _userHelper.GetUserByEmailAsync("alexandre.mcr.roque@gmail.com");
