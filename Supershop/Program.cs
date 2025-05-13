@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
 using Supershop.Data;
 using Supershop.Data.Entities;
@@ -15,7 +14,6 @@ namespace Supershop
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
             builder.Services.AddIdentity<User, IdentityRole>(cfg =>
             {
                 cfg.User.RequireUniqueEmail = true;
@@ -55,8 +53,7 @@ namespace Supershop
 
             app.UseRouting();
 
-            // TODO uncomment after implementing auth
-            //app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
