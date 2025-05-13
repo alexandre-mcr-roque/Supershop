@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "serviceConnectorResourceId": "",
+      "secretStore": "AzureAppSettings",
+      "type": "mssql.onprem",
+      "connectionId": "ConnectionStrings:DefaultConnection",
+      "dynamicId": null
+    },
+    "storage1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/supershop/providers/Microsoft.ServiceLinker/linkers/BlobConnectionString_90E63E7788, /subscriptions/b90b3fdc-e5ad-4142-aee3-2aede7103ae5/resourceGroups/Supershop2025RG/providers/Microsoft.Web/sites/supershop/providers/Microsoft.ServiceLinker/linkers/BlobConnectionString_1AF4C8B75F",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/supershopimages",
+      "type": "storage.azure",
+      "connectionId": "Blob:ConnectionString",
+      "dynamicId": null
+    }
+  }
+}

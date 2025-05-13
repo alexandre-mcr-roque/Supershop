@@ -1,17 +1,15 @@
-﻿using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
+﻿using Azure.Storage.Blobs;
 
 namespace Supershop.Helpers
 {
     public class BlobHelper : IBlobHelper
     {
-        private readonly CloudBlobClient _blobClient;
+        private readonly BlobServiceClient _blobService;
 
         public BlobHelper(IConfiguration configuration)
         {
             string keys = configuration["Blob:ConnectionString"]!;
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(keys);
-            _blobClient = storageAccount.CreateCloudBlobClient();
+            _blobService = new BlobServiceClient(keys);
         }
 
         public async Task<Guid> UploadBlobAsync(IFormFile file, string containerName)
@@ -38,12 +36,12 @@ namespace Supershop.Helpers
             return await UploadStreamAsync(stream, containerName, oldImageId);
         }
 
-        private async Task<Guid> UploadStreamAsync(Stream stream, string containerName, Guid oldImageUd)
+        private async Task<Guid> UploadStreamAsync(Stream stream, string containerName, Guid oldImageId)
         {
-            Guid name = oldImageUd != Guid.Empty ? oldImageUd : Guid.NewGuid();
-            var container = _blobClient.GetContainerReference(containerName);
-            var blockBlob = container.GetBlockBlobReference(name.ToString());
-            await blockBlob.UploadFromStreamAsync(stream);
+            Guid name = oldImageId != Guid.Empty ? oldImageId : Guid.NewGuid();
+            var containerClient = _blobService.GetBlobContainerClient(containerName);
+            var blobClient = containerClient.GetBlobClient(name.ToString());
+            await blobClient.UploadAsync(stream, overwrite: true);
             // Upload complete, dispose stream
             await stream.DisposeAsync();
             return name;
