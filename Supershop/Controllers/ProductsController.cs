@@ -61,6 +61,7 @@ namespace Supershop.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Name,Price,LastPurchase,LastSale,IsAvailable,Stock,ImageFile")] ProductViewModel model)
         {
             if (ModelState.IsValid)
@@ -72,8 +73,7 @@ namespace Supershop.Controllers
                 }
                 var product = _converterHelper.ToProduct(model, imageId, true);
 
-                // TODO modify to the currently logged in user
-                product.User = await _userHelper.GetUserByEmailAsync("alexandre.mcr.roque@gmail.com");
+                product.User = await _userHelper.GetUserByEmailAsync(User.Identity!.Name!);
                 await _productRepository.CreateAsync(product);
                 return RedirectToAction(nameof(Index));
             }
@@ -123,8 +123,7 @@ namespace Supershop.Controllers
                     }
                     var product = _converterHelper.ToProduct(model, imageId, false);
 
-                    // TODO modify to the currently logged in user
-                    product.User = await _userHelper.GetUserByEmailAsync("alexandre.mcr.roque@gmail.com");
+                    product.User = await _userHelper.GetUserByEmailAsync(User.Identity!.Name!);
                     await _productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -144,6 +143,7 @@ namespace Supershop.Controllers
         }
 
         // GET: Products/Delete/5
+        [Authorize]
         public async Task<IActionResult> DeleteAsync(int? id)
         {
             if (id == null)
