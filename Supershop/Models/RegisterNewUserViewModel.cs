@@ -14,6 +14,7 @@ namespace Supershop.Models
 
         [Required]
         [DataType(DataType.EmailAddress)]
+        [Display(Name = "Email Address")]
         public string Username { get; set; }
 
         [Required]
@@ -24,6 +25,7 @@ namespace Supershop.Models
         [Required]
         [Compare(nameof(Password))]
         [DataType(DataType.Password)]
+        [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Supershop.Data.Entities;
 using Supershop.Helpers;
@@ -104,6 +106,76 @@ namespace Supershop.Controllers
             ModelState.AddModelError(string.Empty, "The user couldn't be created.");
             model.Password = ""; model.ConfirmPassword = ""; // Clear password field
             return View(model);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> ChangeUser()
+        {
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity!.Name!);
+            if (user == null) return NotFound();
+
+            var model = new ChangeUserViewModel();
+            model.FirstName = user.FirstName;
+            model.LastName = user.LastName;
+            model.PhoneNumber = user.PhoneNumber;
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ChangeUser([Bind("FirstName","LastName","PhoneNumber")]ChangeUserViewModel model)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity!.Name!);
+            if (user == null) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.PhoneNumber = model.PhoneNumber;
+                var response = await _userHelper.UpdateUserAsync(user);
+                if (response.Succeeded)
+                {
+                    ViewBag.UserMessage = "User updated.";
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, response.Errors.FirstOrDefault()?.Description ?? "The user couldn't be updated.");
+                }
+                return View(model);
+            }
+            ModelState.AddModelError(string.Empty, "The user couldn't be updated.");
+            return View(model);
+        }
+
+        [Authorize]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity!.Name!);
+            if (user == null) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                var result = await _userHelper.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ChangeUser");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, result.Errors.First().Description);
+                    return View();
+                }
+            }
+            ModelState.AddModelError(string.Empty, "The password couldn't be updated.");
+            return View(); // Do not return password fields
         }
     }
 }
