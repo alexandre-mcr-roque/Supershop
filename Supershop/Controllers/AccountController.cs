@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Supershop.Data.Entities;
 using Supershop.Helpers;
 using Supershop.Models;
+using System.Net;
 
 namespace Supershop.Controllers
 {
@@ -177,6 +178,12 @@ namespace Supershop.Controllers
             }
             ModelState.AddModelError(string.Empty, "The password couldn't be updated.");
             return View(); // Do not return password fields
+        }
+
+        public IActionResult NotAuthorized()
+        {
+            Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return View();
         }
     }
 }

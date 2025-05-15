@@ -37,13 +37,13 @@ namespace Supershop.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             var product = await _productRepository.GetByIdAsync(id.Value);
             if (product == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             return View(product);
@@ -86,13 +86,13 @@ namespace Supershop.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             var product = await _productRepository.GetByIdAsync(id.Value);
             if (product == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             var model = _converterHelper.ToProductViewModel(product);
@@ -109,7 +109,7 @@ namespace Supershop.Controllers
         {
             if (id != model.Id)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             if (ModelState.IsValid)
@@ -130,7 +130,7 @@ namespace Supershop.Controllers
                 {
                     if (!await _productRepository.ExistAsync(id))
                     {
-                        return NotFound();
+                        return new NotFoundViewResult("ProductNotFound");
                     }
                     else
                     {
@@ -148,13 +148,13 @@ namespace Supershop.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             var product = await _productRepository.GetByIdAsync(id.Value);
             if (product == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             return View(product);
