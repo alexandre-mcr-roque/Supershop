@@ -50,7 +50,7 @@ namespace Supershop.Controllers
         }
 
         // GET: Products/Create
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -61,7 +61,7 @@ namespace Supershop.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,Name,Price,LastPurchase,LastSale,IsAvailable,Stock,ImageFile")] ProductViewModel model)
         {
             if (ModelState.IsValid)
@@ -81,7 +81,7 @@ namespace Supershop.Controllers
         }
 
         // GET: Products/Edit/5
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -104,7 +104,7 @@ namespace Supershop.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,ImageId,LastPurchase,LastSale,IsAvailable,Stock,ImageFile")] ProductViewModel model)
         {
             if (id != model.Id)
@@ -143,7 +143,7 @@ namespace Supershop.Controllers
         }
 
         // GET: Products/Delete/5
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync(int? id)
         {
             if (id == null)
@@ -163,6 +163,7 @@ namespace Supershop.Controllers
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);

@@ -83,6 +83,7 @@ namespace Supershop.Controllers
                         model.Password = ""; model.ConfirmPassword = ""; // Clear password field
                         return View(model);
                     }
+                    await _userHelper.AddUserToRoleAsync(user, "Customer");
                     //var loginViewModel = new LoginViewModel
                     //{
                     //    Username = model.Username,
@@ -125,7 +126,7 @@ namespace Supershop.Controllers
         [Authorize]
         public async Task<IActionResult> ChangeUser([Bind("FirstName","LastName","PhoneNumber")]ChangeUserViewModel model)
         {
-            var user = await _userHelper.GetUserByEmailAsync(User.Identity!.Name!);
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity!.Name ?? string.Empty);
             if (user == null) return NotFound();
 
             if (ModelState.IsValid)
@@ -158,7 +159,7 @@ namespace Supershop.Controllers
         [Authorize]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            var user = await _userHelper.GetUserByEmailAsync(User.Identity!.Name!);
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity!.Name ?? string.Empty);
             if (user == null) return NotFound();
 
             if (ModelState.IsValid)
