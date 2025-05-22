@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Supershop.Data;
 using Supershop.Data.Entities;
 using Supershop.Models;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Supershop.Controllers
 {
@@ -28,7 +29,7 @@ namespace Supershop.Controllers
 
         public async Task<IActionResult> Create()
         {
-            var model = await _orderRepository.GetDetailsTempAsync(User.Identity!.Name!);
+            var model = await _orderRepository.GetOrderDetailsTempAsync(User.Identity!.Name!);
             return View(model);
         }
 
@@ -52,6 +53,39 @@ namespace Supershop.Controllers
             }
             model.Products = _productRepository.GetComboProducts();
             return View(model);
+        }
+
+        public async Task<IActionResult> Increase(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            await _orderRepository.ModifyOrderDetailTempQuantityAsync(id.Value, 1);
+            return RedirectToAction("Create");
+        }
+
+        public async Task<IActionResult> Decrease(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            await _orderRepository.ModifyOrderDetailTempQuantityAsync(id.Value, -1);
+            return RedirectToAction("Create");
+        }
+
+        public async Task<IActionResult> DeleteItem(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            await _orderRepository.DeleteOrderDetailTempAsync(id.Value);
+            return RedirectToAction("Create");
         }
     }
 }

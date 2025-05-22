@@ -51,7 +51,7 @@ namespace Supershop.Data
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IQueryable<OrderDetailTemp>?> GetDetailsTempAsync(string userName)
+        public async Task<IQueryable<OrderDetailTemp>?> GetOrderDetailsTempAsync(string userName)
         {
             var user = await _userHelper.GetUserByEmailAsync(userName);
             if (user == null)
@@ -97,12 +97,24 @@ namespace Supershop.Data
                 return;
             }
 
-            orderDetailTemp.Quantity = quantity;
+            orderDetailTemp.Quantity += quantity;
             if (orderDetailTemp.Quantity > 0)
             {
                 _context.OrderDetailsTemp.Update(orderDetailTemp);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task DeleteOrderDetailTempAsync(int id)
+        {
+            var orderDetailTemp = await _context.OrderDetailsTemp.FindAsync(id);
+            if (orderDetailTemp == null)
+            {
+                return;
+            }
+
+            _context.OrderDetailsTemp.Remove(orderDetailTemp);
+            await _context.SaveChangesAsync();
         }
     }
 }
