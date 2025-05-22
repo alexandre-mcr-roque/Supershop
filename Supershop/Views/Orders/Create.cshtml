@@ -7,7 +7,7 @@
 
 <p>
     <a asp-action="AddProduct" class="btn btn-success"><i class="fa-solid fa-cart-plus"></i> Add Product</a>
-    <a asp-action="ConfirmOrder" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> Confirm Order</a>
+    <a asp-action="ConfirmOrder" class="btn btn-primary" id="btnConfirm"><i class="fa-solid fa-cart-shopping"></i> Confirm Order</a>
 </p>
 <table class="table">
     <thead>
@@ -45,9 +45,83 @@
             <td>
                 <a asp-action="Increase" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa-solid fa-plus"></i></a>
                 <a asp-action="Decrease" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa-solid fa-minus"></i></a>
-                <a asp-action="DeleteItem" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
+                <a asp-action="DeleteItem" asp-route-id="@item.Id" class="btn btn-danger" id="btnDeleteItem"><i class="fa-solid fa-trash"></i></a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<div id="confirmDialog" class="modal fade">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirm Order</h4>
+                <button type="button" class="btn btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Do you want to confirm the order?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="btnYesConfirm">Yes</button>
+                <button type="button" class="btn btn-success" id="btnNoConfirm" data-bs-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="deleteDialog" class="modal fade">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Remove Item</h4>
+                <button type="button" class="btn btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Do you want to remove the item from the order?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="btnYesDelete">Yes</button>
+                <button type="button" class="btn btn-success" id="btnNoDelete" data-bs-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            /*
+             * Confirm Dialog
+             */
+            $("#btnConfirm").click(function () {
+                $("#confirmDialog").modal("show");
+                return false;   // cancel internal action
+            });
+            // Handled in bootstrap by using html property 'data-bs-dismiss'
+            // $("#btnNoConfirm").click(function () {
+            //     $("#confirmDialog").modal("hide");
+            //     return false;
+            // });
+            $("#btnYesConfirm").click(function () {
+                window.location.href = "/Orders/ConfirmOrder"
+            });
+            /*
+             * Delete Dialog
+             */
+            let href = "#";
+            $("a[id*=btnDeleteItem]").click(function (e) {
+                let _href = $(e.currentTarget).attr("href");
+                href = _href === "" ? "#" : _href;    // do nothing if 'href' property is empty
+                $("#deleteDialog").modal("show");
+                return false;   // cancel internal action
+            });
+            // Handled in bootstrap by using html property 'data-bs-dismiss'
+            // $("#btnNoDelete").click(function () {
+            //     $("#deleteDialog").modal("hide");
+            //     return false;
+            // });
+            $("#btnYesDelete").click(function () {
+                window.location.href = href
+            });
+        });
+    </script>
+}

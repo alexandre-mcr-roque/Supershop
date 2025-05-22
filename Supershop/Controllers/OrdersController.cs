@@ -93,7 +93,5 @@ namespace Supershop.Controllers
             await _orderRepository.ConfirmOrderAsync(User.Identity!.Name!);
             return RedirectToAction("Index");
         }
-
-        public async Task<IActionResult> Confirm
     }
 }
