@@ -87,5 +87,13 @@ namespace Supershop.Controllers
             await _orderRepository.DeleteOrderDetailTempAsync(id.Value);
             return RedirectToAction("Create");
         }
+
+        public async Task<IActionResult> ConfirmOrder()
+        {
+            await _orderRepository.ConfirmOrderAsync(User.Identity!.Name!);
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Confirm
     }
 }

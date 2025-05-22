@@ -116,5 +116,41 @@ namespace Supershop.Data
             _context.OrderDetailsTemp.Remove(orderDetailTemp);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> ConfirmOrderAsync(string userName)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(userName);
+            if (user == null)
+            {
+                return false;
+            }
+
+            var orderTmp = await _context.OrderDetailsTemp
+                .Include(odt => odt.Product)
+                .Where(odt => odt.User == user)
+                .ToListAsync();
+            if (orderTmp == null || orderTmp.Count == 0)
+            {
+                return false;
+            }
+
+            var details = orderTmp.Select(odt => new OrderDetail
+            {
+                Price = odt.Price,
+                Product = odt.Product,
+                Quantity = odt.Quantity
+            }).ToList();
+
+            var order = new Order
+            {
+                OrderDate = DateTime.UtcNow,
+                User = user,
+                Items = details
+            };
+
+            _context.OrderDetailsTemp.RemoveRange(orderTmp);    // changes will be saved after calling CreateAsync()
+            await CreateAsync(order);
+            return true;
+        }
     }
 }

@@ -7,9 +7,6 @@ namespace Supershop.Data.Entities
         public int Id { get; set; }
 
         [Required]
-        public User User { get; set; }
-
-        [Required]
         public Product Product { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:C2}")]
