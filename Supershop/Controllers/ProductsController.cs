@@ -167,7 +167,22 @@ namespace Supershop.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
-            await _productRepository.DeleteAsync(product!);
+
+            try
+            {
+                await _productRepository.DeleteAsync(product!);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
+                {
+                    ViewBag.ErrorTitle = $"{product!.Name} is probably being used!!!";
+                    ViewBag.ErrorMessage = "Try deleting all orders referencing the product before deleting it.";
+                    return View("Error");
+                }
+                throw;  // Do normal error handling
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }
