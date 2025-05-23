@@ -155,6 +155,47 @@ namespace Supershop.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Supershop.Data.Entities.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CountryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
+
+                    b.ToTable("Cities", (string)null);
+                });
+
+            modelBuilder.Entity("Supershop.Data.Entities.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Countries", (string)null);
+                });
+
             modelBuilder.Entity("Supershop.Data.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -177,7 +218,7 @@ namespace Supershop.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Supershop.Data.Entities.OrderDetail", b =>
@@ -206,7 +247,7 @@ namespace Supershop.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetails");
+                    b.ToTable("OrderDetails", (string)null);
                 });
 
             modelBuilder.Entity("Supershop.Data.Entities.OrderDetailTemp", b =>
@@ -236,7 +277,7 @@ namespace Supershop.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("OrderDetailsTemp");
+                    b.ToTable("OrderDetailsTemp", (string)null);
                 });
 
             modelBuilder.Entity("Supershop.Data.Entities.Product", b =>
@@ -277,7 +318,7 @@ namespace Supershop.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Supershop.Data.Entities.User", b =>
@@ -286,6 +327,14 @@ namespace Supershop.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("CityId")
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -341,6 +390,8 @@ namespace Supershop.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CityId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -404,6 +455,13 @@ namespace Supershop.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Supershop.Data.Entities.City", b =>
+                {
+                    b.HasOne("Supershop.Data.Entities.Country", null)
+                        .WithMany("Cities")
+                        .HasForeignKey("CountryId");
+                });
+
             modelBuilder.Entity("Supershop.Data.Entities.Order", b =>
                 {
                     b.HasOne("Supershop.Data.Entities.User", "User")
@@ -456,6 +514,20 @@ namespace Supershop.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Supershop.Data.Entities.User", b =>
+                {
+                    b.HasOne("Supershop.Data.Entities.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId");
+
+                    b.Navigation("City");
+                });
+
+            modelBuilder.Entity("Supershop.Data.Entities.Country", b =>
+                {
+                    b.Navigation("Cities");
                 });
 
             modelBuilder.Entity("Supershop.Data.Entities.Order", b =>

@@ -1,0 +1,56 @@
+﻿@model Supershop.Data.Entities.Country
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+<h4>Country</h4>
+<hr />
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+</div>
+<div class="mb-5">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+    <a asp-action="AddCity" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add City</a>
+    <a asp-action="Index" class="btn btn-success"><i class="fa-solid fa-chevron-left"></i> Back to List</a>
+</div>
+
+<h4>Cities</h4>
+@if (Model.Cities == null || Model.Cities.Count == 0)
+{
+    <h5>No cities added yet</h5>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cities!.First().Name)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            
+@foreach (var item in Model.Cities.OrderBy(c => c.Name)) {
+           <tr>
+               <td>
+                   @Html.DisplayFor(modelItem => item.Name)
+               </td>
+               <td>
+                    <a asp-action="EditCity" asp-route-id="@item.Id" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                    <a asp-action="DeleteCity" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Delete</a>
+               </td>
+           </tr>
+}
+        </tbody>
+    </table>
+}

@@ -21,4 +21,11 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        $(".date").datepicker({
+            orientation: "bottom",
+            uiLibrary: "bootstrap5",
+            autoclose: true
+        });
+    </script>
 }

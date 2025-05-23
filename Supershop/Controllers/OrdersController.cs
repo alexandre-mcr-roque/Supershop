@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Supershop.Data;
-using Supershop.Data.Entities;
 using Supershop.Models;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Supershop.Controllers
 {
@@ -44,6 +42,7 @@ namespace Supershop.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddProduct([Bind("ProductId","Quantity")]AddItemViewModel model)
         {
             if (ModelState.IsValid)
@@ -92,6 +91,39 @@ namespace Supershop.Controllers
         {
             await _orderRepository.ConfirmOrderAsync(User.Identity!.Name!);
             return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Deliver(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            
+            var order = await _orderRepository.GetOrderAsync(id.Value);
+            if (order == null || order.DeliveryDate != null)
+            {
+                return NotFound();
+            }
+
+            var model = new DeliveryViewModel
+            {
+                Id = order.Id,
+                DeliveryDate = DateTime.Today
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Deliver([Bind("Id,DeliveryDate")]DeliveryViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _orderRepository.DeliverOrder(model);
+                return RedirectToAction("Index");
+            }
+            return View(model);
         }
     }
 }

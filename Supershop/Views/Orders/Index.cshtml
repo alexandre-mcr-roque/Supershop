@@ -55,7 +55,10 @@
                 @Html.DisplayFor(modelItem => item.Value)
             </td>
             <td>
-                <a asp-action="Deliver" asp-route-id="@item.Id" class="btn btn-info" id="btnDeliver"><i class="fa-solid fa-truck-arrow-right"></i> Deliver</a>
+            @if (item.DeliveryDate == null)
+            {
+                <a asp-action="Deliver" asp-route-id="@item.Id" class="btn btn-primary" id="btnDeliver"><i class="fa-solid fa-truck-arrow-right"></i> Deliver</a>     
+            }
                 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" id="btnDelete"><i class="fa-solid fa-trash"></i> Delete</a>
             </td>
         </tr>

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Connections.Features;
+using Microsoft.EntityFrameworkCore;
 using Supershop.Data.Entities;
 using Supershop.Helpers;
 using Supershop.Models;
@@ -151,6 +152,24 @@ namespace Supershop.Data
             _context.OrderDetailsTemp.RemoveRange(orderTmp);    // changes will be saved after calling CreateAsync()
             await CreateAsync(order);
             return true;
+        }
+
+        public async Task DeliverOrder(DeliveryViewModel model)
+        {
+            var order = await _context.Orders.FindAsync(model.Id);
+            if (order == null)
+            {
+                return;
+            }
+
+            order.DeliveryDate = model.DeliveryDate;
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Order?> GetOrderAsync(int id)
+        {
+            return await _context.Orders.FindAsync(id);
         }
     }
 }
