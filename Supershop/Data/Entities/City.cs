@@ -13,6 +13,6 @@ namespace Supershop.Data.Entities
         public string Name { get; set; }
 
         // Foreign key references Country.Id
-        public int? CountryId { get; set; }
+        public int CountryId { get; set; }
     }
 }

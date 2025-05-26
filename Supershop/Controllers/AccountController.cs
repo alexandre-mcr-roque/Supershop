@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Supershop.Data;
 using Supershop.Data.Entities;
 using Supershop.Helpers;
 using Supershop.Models;
@@ -12,10 +13,14 @@ namespace Supershop.Controllers
     public class AccountController : Controller
     {
         private readonly IUserHelper _userHelper;
+        private readonly ICountryRepository _countryRepository;
 
-        public AccountController(IUserHelper userHelper)
+        public AccountController(
+            IUserHelper userHelper,
+            ICountryRepository countryRepository)
         {
             _userHelper = userHelper;
+            _countryRepository = countryRepository;
         }
 
         public IActionResult Login()
@@ -59,54 +64,62 @@ namespace Supershop.Controllers
         public async Task<IActionResult> Register()
         {
             await _userHelper.LogoutAsync();
-            return View();
+
+            var model = new RegisterNewUserViewModel
+            {
+                Cities = _countryRepository.GetComboCities(0),  // Empty list
+                Countries = _countryRepository.GetComboCountries()
+            };
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([Bind("FirstName","LastName","Username","Password","ConfirmPassword")]RegisterNewUserViewModel model)
+        public async Task<IActionResult> Register([Bind("FirstName","LastName","Username","PhoneNumber","Address","CityId","CountryId","Password","ConfirmPassword")]RegisterNewUserViewModel model)
         {
+            string errorMessage = "The user couldn't be created.";
             if (ModelState.IsValid)
             {
                 var user = await _userHelper.GetUserByEmailAsync(model.Username);
                 if (user == null)
                 {
+                    var city = await _countryRepository.GetCityAsync(model.CityId);
                     user = new User
                     {
                         FirstName = model.FirstName,
                         LastName = model.LastName,
                         Email = model.Username,
-                        UserName = model.Username
+                        UserName = model.Username,
+                        PhoneNumber = model.PhoneNumber,
+                        Address = model.Address,
+                        City = city
                     };
                     var result = await _userHelper.AddUserAsync(user, model.Password);
-                    if (result != IdentityResult.Success)
+                    if (result == IdentityResult.Success)
                     {
-                        ModelState.AddModelError(string.Empty, "The user couldn't be created.");
-                        model.Password = ""; model.ConfirmPassword = ""; // Clear password field
-                        return View(model);
+                        await _userHelper.AddUserToRoleAsync(user, "Customer");
+                        //var loginViewModel = new LoginViewModel
+                        //{
+                        //    Username = model.Username,
+                        //    Password = model.Password,
+                        //    RememberMe = false
+                        //};
+                        //var result2 = await _userHelper.LoginAsync(loginViewModel);
+                        //if (result2.Succeeded)
+                        //{
+                        //    return RedirectToAction("Index", "Home");
+                        //}
+                        return RedirectToAction("Login", new { RegisterSuccess = true, model.Username });
                     }
-                    await _userHelper.AddUserToRoleAsync(user, "Customer");
-                    //var loginViewModel = new LoginViewModel
-                    //{
-                    //    Username = model.Username,
-                    //    Password = model.Password,
-                    //    RememberMe = false
-                    //};
-                    //var result2 = await _userHelper.LoginAsync(loginViewModel);
-                    //if (result2.Succeeded)
-                    //{
-                    //    return RedirectToAction("Index", "Home");
-                    //}
-                    return RedirectToAction("Login", new { RegisterSuccess = true, model.Username });
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "An account with this email already exists.");
-                    model.Password = ""; model.ConfirmPassword = ""; // Clear password field
-                    return View(model);
+                    errorMessage = "An account with this email already exists.";
                 }
             }
-            ModelState.AddModelError(string.Empty, "The user couldn't be created.");
+            ModelState.AddModelError(string.Empty, errorMessage);
             model.Password = ""; model.ConfirmPassword = ""; // Clear password field
+            model.Cities = _countryRepository.GetComboCities(model.CountryId);
+            model.Countries = _countryRepository.GetComboCountries();
             return View(model);
         }
 
@@ -116,20 +129,31 @@ namespace Supershop.Controllers
             var user = await _userHelper.GetUserByEmailAsync(User.Identity!.Name!);
             if (user == null) return NotFound();
 
-            var model = new ChangeUserViewModel();
-            model.FirstName = user.FirstName;
-            model.LastName = user.LastName;
-            model.PhoneNumber = user.PhoneNumber;
+            var cityId = user.CityId.GetValueOrDefault();
+            var countryId = (await _countryRepository.GetCityAsync(cityId))?.CountryId ?? 0;
+            var model = new ChangeUserViewModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                CityId = cityId,
+                Cities = _countryRepository.GetComboCities(countryId),
+                CountryId = countryId,
+                Countries = _countryRepository.GetComboCountries()
+            };
             return View(model);
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> ChangeUser([Bind("FirstName","LastName","PhoneNumber")]ChangeUserViewModel model)
+        public async Task<IActionResult> ChangeUser([Bind("FirstName","LastName","PhoneNumber","Address","CityId","CountryId")]ChangeUserViewModel model)
         {
             var user = await _userHelper.GetUserByEmailAsync(User.Identity!.Name ?? string.Empty);
             if (user == null) return NotFound();
 
+            model.Cities = _countryRepository.GetComboCities(model.CountryId);
+            model.Countries = _countryRepository.GetComboCountries();
             if (ModelState.IsValid)
             {
                 user.FirstName = model.FirstName;
@@ -184,6 +208,14 @@ namespace Supershop.Controllers
         {
             Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             return View();
+        }
+
+        [HttpPost]
+        [Route("Account/GetCitiesAsync")]
+        public async Task<JsonResult> GetCitiesAsync(int countryId)
+        {
+            var country = await _countryRepository.GetCountryWithCitiesAsync(countryId);
+            return Json(country?.Cities!.OrderBy(c => c.Name));
         }
     }
 }

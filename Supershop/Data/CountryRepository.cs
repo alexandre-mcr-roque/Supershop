@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Supershop.Data.Entities;
 using Supershop.Models;
+using System.Collections.Generic;
 
 namespace Supershop.Data
 {
@@ -41,6 +42,43 @@ namespace Supershop.Data
         public async Task<City?> GetCityAsync(int id)
         {
             return await _context.Cities.FindAsync(id);
+        }
+
+        public IEnumerable<SelectListItem> GetComboCities(int countryId)
+        {
+            var list = _context.Cities
+                .Where(c => c.CountryId == countryId)
+                .Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString()
+                })
+                .OrderBy(l => l.Text).ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "(Select a city)",
+                Value = "0"
+            });
+            return list;
+        }
+
+        public IEnumerable<SelectListItem> GetComboCountries()
+        {
+            var list = _context.Countries
+                .Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.Id.ToString()
+                })
+                .OrderBy(l => l.Text).ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "(Select a country)",
+                Value = "0"
+            });
+            return list;
         }
 
         public IQueryable GetCountriesWithCities()

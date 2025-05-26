@@ -12,7 +12,7 @@ namespace Supershop.Data.Entities
         public string LastName { get; set; }
 
         [MaxLength(50, ErrorMessage = "The field {0} can contain {1} characters length.")]
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         public int? CityId { get; set; }
         public City? City { get; set; }
