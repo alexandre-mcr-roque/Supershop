@@ -63,6 +63,11 @@ namespace Supershop.Data
                 }
                 await _userHelper.AddUserToRoleAsync(user, "Admin");
             }
+            if (!user.EmailConfirmed)
+            {
+                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                await _userHelper.ConfirmEmailAsync(user, token);
+            }
             bool isInRole = await _userHelper.IsUserInRoleAsync(user, "Admin");
             if (!isInRole)
             {
