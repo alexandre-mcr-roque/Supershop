@@ -1,8 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using Supershop.Data;
 using Supershop.Data.Entities;
 using Supershop.Helpers;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Text;
 
 namespace Supershop
 {
@@ -26,6 +31,18 @@ namespace Supershop
             })
                 .AddEntityFrameworkStores<DataContext>();
 
+            builder.Services.AddAuthentication()
+                .AddCookie()
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = builder.Configuration["Tokens:Issuer"],
+                        ValidAudience = builder.Configuration["Tokens:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Tokens:Key"] ?? ""))
+                    };
+                });
+
             builder.Services.AddDbContext<DataContext>(cfg =>
             {
                 cfg.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -47,6 +64,7 @@ namespace Supershop
             });
 
             var app = builder.Build();
+            CheckTokenKey(app);
             RunSeeding(app);
 
             // Configure the HTTP request pipeline.
@@ -72,6 +90,19 @@ namespace Supershop
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+        }
+
+        private static void CheckTokenKey(WebApplication app)
+        {
+            var key = app.Configuration["Tokens:Key"];
+            if (string.IsNullOrEmpty(key)
+                || string.Compare(key, "(Set value in user secrets or environment variables)", true) == 0)
+            {
+                string ex = "Missing 'Key' value for token provider.";
+                if (app.Environment.IsDevelopment())
+                    ex += "\nConfiguration key for missing value: Tokens:Key";
+                throw new ArgumentException(ex);
+            }
         }
 
         private static void RunSeeding(WebApplication app)
