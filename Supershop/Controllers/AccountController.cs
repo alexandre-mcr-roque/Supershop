@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.IdentityModel.Tokens;
 using Supershop.Data;
 using Supershop.Data.Entities;
@@ -39,6 +40,7 @@ namespace Supershop.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([Bind("Username","Password","RememberMe")]LoginViewModel model)
         {
             if (ModelState.IsValid)
@@ -77,6 +79,7 @@ namespace Supershop.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([Bind("FirstName","LastName","Username","PhoneNumber","Address","CityId","CountryId","Password","ConfirmPassword")]RegisterNewUserViewModel model)
         {
             string errorMessage = "The user couldn't be created.";
@@ -156,6 +159,7 @@ namespace Supershop.Controllers
 
         [HttpPost]
         [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeUser([Bind("FirstName","LastName","PhoneNumber","Address","CityId","CountryId")]ChangeUserViewModel model)
         {
             var user = await _userHelper.GetUserByEmailAsync(User.Identity!.Name ?? string.Empty);
@@ -191,6 +195,7 @@ namespace Supershop.Controllers
 
         [HttpPost]
         [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             var user = await _userHelper.GetUserByEmailAsync(User.Identity!.Name ?? string.Empty);
@@ -214,6 +219,7 @@ namespace Supershop.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateToken([FromBody,Bind("Username,Password")] LoginViewModel model)
         {
             if (ModelState.IsValid)
@@ -270,6 +276,83 @@ namespace Supershop.Controllers
             }
 
             return View();
+        }
+
+        public IActionResult RecoverPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecoverPassword([Bind("Email")]RecoverPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    ViewBag.Error = true;
+                    ViewBag.Message = "The email does not correspond to a registered account.";
+                    return View(model);
+                }
+
+                var myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+                var tokenLink = Url.Action("ResetPassword", "Account",
+                    new { token = myToken }, protocol: HttpContext.Request.Scheme);
+
+                Response response = _mailHelper.SendEmail(model.Email, "Password Reset",
+                    "<h1>Password Reset</h1>" +
+                    "To reset the password, please click on the following link:<br><br>" +
+                    $"<a href=\"{tokenLink}\">Reset password</a>");
+                if (response.IsSuccess)
+                {
+                    ViewBag.Message = "The instructions to reset your password has been sent to your email";
+                }
+                else
+                {
+                    ViewBag.Error = true;
+                    ViewBag.Message = "Internal server error. Please try again later.";
+                }
+                return View(model);
+            }
+            ViewBag.Error = true;
+            ViewBag.Message = "Something wrong happened.";
+            return View(model);
+        }
+
+        public IActionResult ResetPassword(string token)
+        {
+            var model = new ResetPasswordViewModel { Token = token };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword([Bind("Username","Password","ConfirmPassword","Token")]ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.Username);
+                if (user != null)
+                {
+                    var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
+                    if (result.Succeeded)
+                    {
+                        ViewBag.Message = "Password reset successfully.";
+                        model.Password = ""; model.ConfirmPassword = "";    // Clear password field
+                        return View(model);
+                    }
+                    ViewBag.Error = true;
+                    ViewBag.Message = "Error while resetting the password.";
+                    model.Password = ""; model.ConfirmPassword = "";    // Clear password field
+                    return View(model);
+                }
+            }
+            ViewBag.Error = true;
+            ViewBag.Message = "Something wrong happened.";
+            model.Password = ""; model.ConfirmPassword = "";    // Clear password field
+            return View(model);
         }
 
         public IActionResult NotAuthorized()

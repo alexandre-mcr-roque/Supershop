@@ -5,6 +5,12 @@ VisualStudioVersion = 17.11.35431.28
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Supershop", "Supershop\Supershop.csproj", "{F5375C3B-5894-4C30-B9BB-FCB43433705C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supershop.Prism", "Supershop.Prism\Supershop.Prism\Supershop.Prism.csproj", "{CA78AC6C-7C7F-494A-89AD-10334F7DF831}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supershop.Prism.Android", "Supershop.Prism\Supershop.Prism.Android\Supershop.Prism.Android.csproj", "{BA2257C7-3A10-4A26-90EF-0648061DAE08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supershop.Prism.iOS", "Supershop.Prism\Supershop.Prism.iOS\Supershop.Prism.iOS.csproj", "{30DF88F3-2E70-4342-9710-F54CCEB99CF5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,20 @@ Global
 		{F5375C3B-5894-4C30-B9BB-FCB43433705C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5375C3B-5894-4C30-B9BB-FCB43433705C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5375C3B-5894-4C30-B9BB-FCB43433705C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA78AC6C-7C7F-494A-89AD-10334F7DF831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA78AC6C-7C7F-494A-89AD-10334F7DF831}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA78AC6C-7C7F-494A-89AD-10334F7DF831}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA78AC6C-7C7F-494A-89AD-10334F7DF831}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA2257C7-3A10-4A26-90EF-0648061DAE08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA2257C7-3A10-4A26-90EF-0648061DAE08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA2257C7-3A10-4A26-90EF-0648061DAE08}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{BA2257C7-3A10-4A26-90EF-0648061DAE08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA2257C7-3A10-4A26-90EF-0648061DAE08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA2257C7-3A10-4A26-90EF-0648061DAE08}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{30DF88F3-2E70-4342-9710-F54CCEB99CF5}.Debug|Any CPU.ActiveCfg = Debug|iPhoneSimulator
+		{30DF88F3-2E70-4342-9710-F54CCEB99CF5}.Debug|Any CPU.Build.0 = Debug|iPhoneSimulator
+		{30DF88F3-2E70-4342-9710-F54CCEB99CF5}.Release|Any CPU.ActiveCfg = Release|iPhoneSimulator
+		{30DF88F3-2E70-4342-9710-F54CCEB99CF5}.Release|Any CPU.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

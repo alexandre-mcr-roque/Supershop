@@ -8,6 +8,7 @@ using Supershop.Helpers;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
+using Vereyon.Web;
 
 namespace Supershop
 {
@@ -50,6 +51,8 @@ namespace Supershop
             {
                 cfg.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            builder.Services.AddFlashMessage();
 
             builder.Services.AddTransient<SeedDb>();
             builder.Services.AddScoped<IUserHelper, UserHelper>();

@@ -7,7 +7,7 @@
 <h1>Orders</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary"><i class="fa-solid fa-star"></i> Create New</a>
+    <a asp-action="Create" class="btn btn-primary my-1"><i class="fa-solid fa-star"></i> Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -57,9 +57,9 @@
             <td>
             @if (item.DeliveryDate == null)
             {
-                <a asp-action="Deliver" asp-route-id="@item.Id" class="btn btn-primary" id="btnDeliver"><i class="fa-solid fa-truck-arrow-right"></i> Deliver</a>     
+                <a asp-action="Deliver" asp-route-id="@item.Id" class="btn btn-primary my-1" id="btnDeliver"><i class="fa-solid fa-truck-arrow-right"></i> Deliver</a>     
             }
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" id="btnDelete"><i class="fa-solid fa-trash"></i> Delete</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger my-1" id="btnDelete"><i class="fa-solid fa-trash"></i> Delete</a>
             </td>
         </tr>
 }

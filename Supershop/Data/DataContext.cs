@@ -16,19 +16,33 @@ namespace Supershop.Data
         public DataContext(DbContextOptions<DataContext> dbContext) : base(dbContext)
         { }
 
-        // Switch all cascade delete rules to restrict
-        //protected override void OnModelCreating(ModelBuilder builder)
-        //{
-        //    base.OnModelCreating(builder);
-        //    var cascadeFKs = builder.Model
-        //        .GetEntityTypes()
-        //        .SelectMany(t => t.GetForeignKeys())
-        //        .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<Country>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
 
-        //    foreach (var fk in cascadeFKs)
-        //    {
-        //        fk.DeleteBehavior = DeleteBehavior.Restrict;
-        //    }
-        //}
+            builder.Entity<Product>()
+                .Property(p => p.Price)
+                .HasColumnType("decimal(18,2)");
+            builder.Entity<OrderDetail>()
+                .Property(p => p.Price)
+                .HasColumnType("decimal(18,2)");
+            builder.Entity<OrderDetailTemp>()
+                .Property(p => p.Price)
+                .HasColumnType("decimal(18,2)");
+
+            // Switch all cascade delete rules to restrict
+            //var cascadeFKs = builder.Model
+            //    .GetEntityTypes()
+            //    .SelectMany(t => t.GetForeignKeys())
+            //    .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
+
+            //foreach (var fk in cascadeFKs)
+            //{
+            //    fk.DeleteBehavior = DeleteBehavior.Restrict;
+            //}
+        }
     }
 }

@@ -6,8 +6,8 @@
 <h2>New Order</h2>
 
 <p>
-    <a asp-action="AddProduct" class="btn btn-success"><i class="fa-solid fa-cart-plus"></i> Add Product</a>
-    <a asp-action="ConfirmOrder" class="btn btn-primary" id="btnConfirm"><i class="fa-solid fa-cart-shopping"></i> Confirm Order</a>
+    <a asp-action="AddProduct" class="btn btn-success my-1"><i class="fa-solid fa-cart-plus"></i> Add Product</a>
+    <a asp-action="ConfirmOrder" class="btn btn-primary my-1" id="btnConfirm"><i class="fa-solid fa-cart-shopping"></i> Confirm Order</a>
 </p>
 <table class="table">
     <thead>
@@ -43,9 +43,9 @@
                 @Html.DisplayFor(modelItem => item.Value)
             </td>
             <td>
-                <a asp-action="Increase" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa-solid fa-plus"></i></a>
-                <a asp-action="Decrease" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa-solid fa-minus"></i></a>
-                <a asp-action="DeleteItem" asp-route-id="@item.Id" class="btn btn-danger" id="btnDeleteItem"><i class="fa-solid fa-trash"></i></a>
+                <a asp-action="Increase" asp-route-id="@item.Id" class="btn btn-primary my-1"><i class="fa-solid fa-plus"></i></a>
+                <a asp-action="Decrease" asp-route-id="@item.Id" class="btn btn-primary my-1"><i class="fa-solid fa-minus"></i></a>
+                <a asp-action="DeleteItem" asp-route-id="@item.Id" class="btn btn-danger my-1" id="btnDeleteItem"><i class="fa-solid fa-trash"></i></a>
             </td>
         </tr>
 }

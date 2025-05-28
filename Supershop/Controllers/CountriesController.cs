@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using Microsoft.EntityFrameworkCore;
 using Supershop.Data;
 using Supershop.Data.Entities;
 using Supershop.Models;
+using Vereyon.Web;
 
 namespace Supershop.Controllers
 {
@@ -11,10 +12,14 @@ namespace Supershop.Controllers
     public class CountriesController : Controller
     {
         private readonly ICountryRepository _countryRepository;
+        private readonly IFlashMessage _flashMessage;
 
-        public CountriesController(ICountryRepository countryRepository)
+        public CountriesController(
+            ICountryRepository countryRepository,
+            IFlashMessage flashMessage)
         {
             _countryRepository = countryRepository;
+            _flashMessage = flashMessage;
         }
 
         //=====================================================================
@@ -52,8 +57,22 @@ namespace Supershop.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _countryRepository.CreateAsync(country);
-                return RedirectToAction("Index");
+                try
+                {
+                    await _countryRepository.CreateAsync(country);
+                    return RedirectToAction("Index");
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException?.Message.Contains("duplicate") ?? false)
+                    {
+                        _flashMessage.Danger("This country already exists.");
+                    }
+                    else
+                    {
+                        _flashMessage.Danger("Unknown error.");
+                    }
+                }
             }
 
             return View(country);

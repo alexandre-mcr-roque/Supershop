@@ -17,9 +17,9 @@
     </dl>
 </div>
 <div class="mb-5">
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
-    <a asp-action="AddCity" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add City</a>
-    <a asp-action="Index" class="btn btn-success"><i class="fa-solid fa-chevron-left"></i> Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning my-1"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+    <a asp-action="AddCity" asp-route-id="@Model.Id" class="btn btn-primary my-1"><i class="fa-solid fa-plus"></i> Add City</a>
+    <a asp-action="Index" class="btn btn-success my-1"><i class="fa-solid fa-chevron-left"></i> Back to List</a>
 </div>
 
 <h4>Cities</h4>
@@ -46,8 +46,8 @@ else
                    @Html.DisplayFor(modelItem => item.Name)
                </td>
                <td>
-                    <a asp-action="EditCity" asp-route-id="@item.Id" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
-                    <a asp-action="DeleteCity" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Delete</a>
+                    <a asp-action="EditCity" asp-route-id="@item.Id" class="btn btn-warning my-1"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                    <a asp-action="DeleteCity" asp-route-id="@item.Id" class="btn btn-danger my-1"><i class="fa-solid fa-trash"></i> Delete</a>
                </td>
            </tr>
 }

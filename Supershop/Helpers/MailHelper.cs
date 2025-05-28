@@ -25,6 +25,7 @@ namespace Supershop.Helpers
             message.To.Add(new MailboxAddress(to, to));
             message.Subject = subject;
 
+            body += "<br><br><span style=\"font-size:.8em;color:#333333\">This email was sent automatically. Do not reply.</span>";
             var bodybuilder = new BodyBuilder { HtmlBody = body };
             message.Body = bodybuilder.ToMessageBody();
 
